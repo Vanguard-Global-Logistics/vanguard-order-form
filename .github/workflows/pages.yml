@@ -27,6 +27,9 @@ jobs:
           python3 -c "import json;d=json.load(open('catalog.json'));n=sum(len(g['items']) for g in d['categories']);print('catalog.json ok:',len(d['categories']),'categories,',n,'items, version',d['version'])"
           python3 -c "import json;json.load(open('config.json'));print('config.json ok')"
       - uses: actions/configure-pages@v5
+        with:
+          # Turns Pages on for the repo if it has never been enabled.
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
