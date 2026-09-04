@@ -1,0 +1,14 @@
+{
+  "version": "2026-09-04.1",
+  "updated": "2026-09-04",
+  "_how_to_edit": "Payment and contact settings the order form reads on load. discount_fingerprint is a hash of the discount code, not the code itself; ask for a new one when the code changes.",
+  "phone_display": "727-687-3338",
+  "phone_e164": "+17276873338",
+  "order_email": "management@vanguardperformancelabs.com",
+  "venmo_recipient": "vanguard_performance",
+  "cashapp_cashtag": "WLavold",
+  "ship_fee": 15,
+  "bac_fee": 5,
+  "discount_rate": 0.25,
+  "discount_fingerprint": 1857099978
+}

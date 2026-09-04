@@ -1,0 +1,34 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check catalog.json and config.json parse
+        run: |
+          python3 -c "import json;d=json.load(open('catalog.json'));n=sum(len(g['items']) for g in d['categories']);print('catalog.json ok:',len(d['categories']),'categories,',n,'items, version',d['version'])"
+          python3 -c "import json;json.load(open('config.json'));print('config.json ok')"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4

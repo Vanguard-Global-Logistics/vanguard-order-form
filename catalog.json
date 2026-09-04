@@ -1,0 +1,218 @@
+{
+  "version": "2026-09-04.1",
+  "updated": "2026-09-04",
+  "_how_to_edit": "Change a price, add a product, or remove one, then commit. Every copy of the order form loads this file. Prices are dollars. size is the label shown. bacWater:false hides the + bac water row. variants is a list of sizes each with its own price. image is optional: a https:// URL or a path in this repo.",
+  "categories": [
+    {
+      "name": "Metabolic",
+      "items": [
+        {
+          "name": "RT",
+          "size": "10 / 20 / 30mg",
+          "variants": [
+            {
+              "size": "10mg",
+              "price": 80
+            },
+            {
+              "size": "20mg",
+              "price": 160
+            },
+            {
+              "size": "30mg",
+              "price": 220
+            }
+          ]
+        },
+        {
+          "name": "MOTS-c",
+          "size": "10mg",
+          "price": 45
+        },
+        {
+          "name": "AOD-9604",
+          "size": "5mg",
+          "price": 45
+        },
+        {
+          "name": "Cagrilintide",
+          "size": "5 / 10mg",
+          "variants": [
+            {
+              "size": "5mg",
+              "price": 78
+            },
+            {
+              "size": "10mg",
+              "price": 110
+            }
+          ]
+        },
+        {
+          "name": "CagriSema",
+          "size": "10mg",
+          "price": 127
+        },
+        {
+          "name": "GLP2-Tirz",
+          "size": "10–60mg",
+          "price": 75
+        }
+      ]
+    },
+    {
+      "name": "Recovery",
+      "items": [
+        {
+          "name": "BPC-157",
+          "size": "10mg",
+          "price": 55
+        },
+        {
+          "name": "TB-500",
+          "size": "10mg",
+          "price": 58
+        },
+        {
+          "name": "BPC-157 + TB-500",
+          "size": "20mg",
+          "price": 84
+        },
+        {
+          "name": "Glow Blend",
+          "size": "70mg",
+          "price": 117
+        }
+      ]
+    },
+    {
+      "name": "Growth Hormone Secretagogue",
+      "items": [
+        {
+          "name": "CJC-1295",
+          "size": "5mg",
+          "price": 30
+        },
+        {
+          "name": "Ipamorelin",
+          "size": "5 / 10mg",
+          "variants": [
+            {
+              "size": "5mg",
+              "price": 41
+            },
+            {
+              "size": "10mg",
+              "price": 65
+            }
+          ]
+        },
+        {
+          "name": "CJC-1295 no DAC + Ipa.",
+          "size": "10mg",
+          "price": 64
+        },
+        {
+          "name": "Sermorelin",
+          "size": "5mg",
+          "price": 48
+        },
+        {
+          "name": "Tesamorelin",
+          "size": "10mg",
+          "price": 69
+        }
+      ]
+    },
+    {
+      "name": "Longevity",
+      "items": [
+        {
+          "name": "NAD+",
+          "size": "500 / 1000mg",
+          "variants": [
+            {
+              "size": "500mg",
+              "price": 59
+            },
+            {
+              "size": "1000mg",
+              "price": 85
+            }
+          ]
+        },
+        {
+          "name": "Epithalon",
+          "size": "50mg",
+          "price": 92
+        }
+      ]
+    },
+    {
+      "name": "Neuro",
+      "items": [
+        {
+          "name": "DSIP",
+          "size": "15mg",
+          "price": 58
+        },
+        {
+          "name": "PT-141",
+          "size": "10mg",
+          "price": 45
+        },
+        {
+          "name": "Selank",
+          "size": "11mg",
+          "price": 56
+        },
+        {
+          "name": "Semax",
+          "size": "11mg",
+          "price": 54
+        }
+      ]
+    },
+    {
+      "name": "Immune / Skin / Hair",
+      "items": [
+        {
+          "name": "KPV",
+          "size": "10mg",
+          "price": 45
+        },
+        {
+          "name": "GHK-Cu",
+          "size": "50mg",
+          "price": 30
+        },
+        {
+          "name": "Thymosin Alpha-1",
+          "size": "10mg",
+          "price": 86
+        }
+      ]
+    },
+    {
+      "name": "Growth Factor",
+      "items": [
+        {
+          "name": "IGF-1 LR3",
+          "size": "1mg",
+          "price": 97
+        }
+      ]
+    },
+    {
+      "name": "Laboratory Supply",
+      "items": [
+        {
+          "name": "Reconstitution Solution",
+          "size": "30mL",
+          "price": 27,
+          "bacWater": false
+        }
+      ]
+    }
+  ]
+}
