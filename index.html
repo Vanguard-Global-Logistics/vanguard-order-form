@@ -1146,6 +1146,108 @@
     .qr-box{width:148px;height:148px;}
   }
 </style>
+<style id="jessie">
+  /* Jessie sits below the cart overlay (70) and drawer (80) on purpose:
+     if the cart is open it must win every tap. */
+  .jessie-launch{
+    position:fixed;right:16px;bottom:100px;z-index:55;
+    display:inline-flex;align-items:center;gap:9px;
+    min-height:44px;padding:0 16px;border-radius:999px;
+    background:#120f0d;border:1px solid var(--gold-dim);
+    color:var(--gold-bright);font:600 13px/1 Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    letter-spacing:.03em;cursor:pointer;
+    box-shadow:0 10px 28px rgba(0,0,0,.5);
+    transition:border-color .2s ease,transform .2s ease;
+  }
+  .jessie-launch:hover{border-color:var(--gold);transform:translateY(-1px);}
+  .jessie-launch .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--sage);flex:none;
+    box-shadow:0 0 0 3px rgba(143,174,154,.16);
+  }
+  .jessie-launch[hidden]{display:none;}
+
+  .jessie-panel{
+    position:fixed;right:16px;bottom:100px;z-index:60;
+    width:min(374px,calc(100vw - 32px));
+    height:min(524px,calc(100vh - 168px));
+    display:none;flex-direction:column;
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 24px 60px rgba(0,0,0,.62);overflow:hidden;
+  }
+  .jessie-panel.open{display:flex;}
+
+  .jessie-head{
+    display:flex;align-items:center;gap:10px;flex:none;
+    padding:13px 14px;border-bottom:1px solid var(--line);background:#120f0d;
+  }
+  .jessie-head .mark{
+    width:30px;height:30px;border-radius:50%;flex:none;
+    border:1px solid var(--gold-dim);color:var(--gold-bright);
+    display:flex;align-items:center;justify-content:center;
+    font:600 13px/1 Georgia,serif;
+  }
+  .jessie-head .who{flex:1;min-width:0;}
+  .jessie-head .who b{display:block;color:var(--ink);font-size:13.5px;font-weight:600;letter-spacing:.02em;}
+  .jessie-head .who span{display:block;color:var(--ink-faint);font-size:10.5px;margin-top:2px;}
+  .jessie-head button{
+    width:32px;height:32px;flex:none;border:0;background:none;cursor:pointer;
+    color:var(--ink-dim);font-size:19px;line-height:1;border-radius:4px;
+  }
+  .jessie-head button:hover{color:var(--ink);background:rgba(255,255,255,.05);}
+
+  .jessie-log{
+    flex:1;min-height:0;overflow-y:auto;padding:14px;
+    display:flex;flex-direction:column;gap:10px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .jessie-msg{
+    max-width:86%;padding:9px 12px;border-radius:9px;
+    font-size:13.5px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;
+  }
+  .jessie-msg.her{align-self:flex-start;background:#1b1715;color:var(--ink);border:1px solid var(--line);}
+  .jessie-msg.you{align-self:flex-end;background:#2a2115;color:var(--gold-bright);border:1px solid var(--gold-dim);}
+  .jessie-msg.warn{align-self:flex-start;background:#1b1715;color:var(--ink-dim);border:1px dashed var(--gold-dim);}
+
+  .jessie-typing{align-self:flex-start;display:flex;gap:4px;padding:11px 12px;}
+  .jessie-typing i{
+    width:5px;height:5px;border-radius:50%;background:var(--ink-faint);
+    animation:jessieBlink 1.2s infinite ease-in-out;
+  }
+  .jessie-typing i:nth-child(2){animation-delay:.18s;}
+  .jessie-typing i:nth-child(3){animation-delay:.36s;}
+  @keyframes jessieBlink{0%,60%,100%{opacity:.25;}30%{opacity:1;}}
+
+  .jessie-ask{
+    flex:none;display:flex;gap:8px;align-items:flex-end;
+    padding:11px;border-top:1px solid var(--line);background:#120f0d;
+  }
+  .jessie-ask textarea{
+    flex:1;min-width:0;resize:none;height:40px;max-height:96px;
+    padding:11px 12px;border-radius:6px;
+    background:var(--bg);border:1px solid var(--line);color:var(--ink);
+    font:400 13.5px/1.4 Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  .jessie-ask textarea:focus{outline:none;border-color:var(--gold-dim);}
+  .jessie-ask button{
+    flex:none;min-height:40px;padding:0 15px;border-radius:6px;border:0;cursor:pointer;
+    background:var(--gold);color:#120f0d;font:600 13px/1 Inter,-apple-system,sans-serif;
+  }
+  .jessie-ask button:disabled{opacity:.4;cursor:default;}
+
+  .jessie-foot{
+    flex:none;padding:0 13px 10px;background:#120f0d;
+    color:var(--ink-faint);font-size:9.5px;line-height:1.5;
+  }
+
+  @media (max-width:520px){
+    .jessie-panel{right:8px;left:8px;width:auto;bottom:96px;height:min(500px,calc(100vh - 156px));}
+    .jessie-launch{right:12px;bottom:96px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .jessie-launch{transition:none;}
+    .jessie-typing i{animation:none;opacity:.55;}
+  }
+</style>
 </head>
 <body>
 
@@ -1785,7 +1887,7 @@
   <p class="payment-note">Payment is completed in the selected provider. This page never requests or stores bank, card, Venmo, Zelle, or Apple account credentials.</p>
 </section>
 
-<div class="footnote"><span class="data-status" id="dataStatus">Loading the live price list…</span><br><span class="build-stamp">Version 2026-09-04 · build 15 — live price list from the repository</span><br>
+<div class="footnote"><span class="data-status" id="dataStatus">Loading the live price list…</span><br><span class="build-stamp">Version 2026-09-04 · build 16 — live price list from the repository</span><br>
   Full compound details, mechanism data, and references are available at <a href="https://vanguardperformancelabs.com/products" target="_blank" rel="noopener">vanguardperformancelabs.com/products</a>. Pricing reflects current list price and is subject to change. Bacteriostatic water can be added to any vial for $5.00 per bottle at checkout.
 </div>
 
@@ -2797,6 +2899,130 @@ async function loadRemoteData(){
 
 loadRemoteData();
 
+</script>
+
+<button class="jessie-launch" id="jessie-launch" type="button" aria-haspopup="dialog">
+  <span class="dot" aria-hidden="true"></span>Ask Jessie
+</button>
+
+<section class="jessie-panel" id="jessie-panel" role="dialog" aria-modal="false" aria-label="Ask Jessie">
+  <header class="jessie-head">
+    <span class="mark" aria-hidden="true">J</span>
+    <span class="who"><b>Jessie</b><span>Vanguard order desk</span></span>
+    <button type="button" id="jessie-close" aria-label="Close">&times;</button>
+  </header>
+  <div class="jessie-log" id="jessie-log" role="log" aria-live="polite"></div>
+  <div class="jessie-ask">
+    <textarea id="jessie-input" rows="1" placeholder="Ask about products, pricing, or shipping" aria-label="Message Jessie"></textarea>
+    <button type="button" id="jessie-send">Send</button>
+  </div>
+  <p class="jessie-foot">Jessie answers from the current price list. Research use only &mdash; she cannot advise on dosing or use. Call 727-687-3338 for anything else.</p>
+</section>
+
+<script>
+(function(){
+  var launch = document.getElementById('jessie-launch');
+  var panel  = document.getElementById('jessie-panel');
+  var log    = document.getElementById('jessie-log');
+  var input  = document.getElementById('jessie-input');
+  var send   = document.getElementById('jessie-send');
+  var close  = document.getElementById('jessie-close');
+  if(!launch || !panel || !log || !input || !send) return;
+
+  var history = [];
+  var busy = false;
+  var greeted = false;
+
+  function bubble(kind, text){
+    var node = document.createElement('div');
+    node.className = 'jessie-msg ' + kind;
+    node.textContent = text;              // never innerHTML — model output is text
+    log.appendChild(node);
+    log.scrollTop = log.scrollHeight;
+    return node;
+  }
+
+  function typing(){
+    var node = document.createElement('div');
+    node.className = 'jessie-typing';
+    node.innerHTML = '<i></i><i></i><i></i>';
+    log.appendChild(node);
+    log.scrollTop = log.scrollHeight;
+    return node;
+  }
+
+  function open(){
+    panel.classList.add('open');
+    launch.hidden = true;
+    if(!greeted){
+      greeted = true;
+      bubble('her', 'Hi — I\u2019m Jessie. I can tell you what we carry, what it costs, and how shipping works. What are you looking for?');
+      if(location.protocol === 'file:'){
+        bubble('warn', 'You are viewing a saved copy of this page, so I cannot answer here. Open the live site, or call 727-687-3338.');
+      }
+    }
+    setTimeout(function(){ input.focus(); }, 40);
+  }
+
+  function shut(){
+    panel.classList.remove('open');
+    launch.hidden = false;
+  }
+
+  async function ask(){
+    var text = String(input.value || '').trim();
+    if(!text || busy) return;
+    if(text.length > 2000) text = text.slice(0, 2000);
+
+    input.value = '';
+    input.style.height = '40px';
+    bubble('you', text);
+    history.push({ role: 'user', content: text });
+
+    busy = true;
+    send.disabled = true;
+    var dots = typing();
+
+    try {
+      var res = await fetch('/api/jessie', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history.slice(-20) })
+      });
+      var data = await res.json().catch(function(){ return {}; });
+      dots.remove();
+
+      if(!res.ok || !data.reply){
+        bubble('warn', data.error || 'I could not reach the order desk just then. Try again, or call 727-687-3338.');
+      } else {
+        bubble('her', data.reply);
+        history.push({ role: 'assistant', content: data.reply });
+      }
+    } catch(error){
+      dots.remove();
+      bubble('warn', 'I could not reach the order desk just then. Try again, or call 727-687-3338.');
+    }
+
+    busy = false;
+    send.disabled = false;
+    input.focus();
+  }
+
+  launch.addEventListener('click', open);
+  close && close.addEventListener('click', shut);
+  send.addEventListener('click', ask);
+
+  input.addEventListener('keydown', function(event){
+    if(event.key === 'Enter' && !event.shiftKey){ event.preventDefault(); ask(); }
+  });
+  input.addEventListener('input', function(){
+    input.style.height = '40px';
+    input.style.height = Math.min(input.scrollHeight, 96) + 'px';
+  });
+  document.addEventListener('keydown', function(event){
+    if(event.key === 'Escape' && panel.classList.contains('open')) shut();
+  });
+})();
 </script>
 </body>
 </html>
