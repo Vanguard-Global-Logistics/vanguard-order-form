@@ -1887,7 +1887,7 @@
   <p class="payment-note">Payment is completed in the selected provider. This page never requests or stores bank, card, Venmo, Zelle, or Apple account credentials.</p>
 </section>
 
-<div class="footnote"><span class="data-status" id="dataStatus">Loading the live price list…</span><br><span class="build-stamp">Version 2026-09-04 · build 16 — live price list from the repository</span><br>
+<div class="footnote"><span class="data-status" id="dataStatus">Loading the live price list…</span><br><span class="build-stamp">Version 2026-09-04 · build 17 — live price list from the repository, orders recorded</span><br>
   Full compound details, mechanism data, and references are available at <a href="https://vanguardperformancelabs.com/products" target="_blank" rel="noopener">vanguardperformancelabs.com/products</a>. Pricing reflects current list price and is subject to change. Bacteriostatic water can be added to any vial for $5.00 per bottle at checkout.
 </div>
 
@@ -2060,6 +2060,35 @@ let CASHAPP_CASHTAG = "WLavold";
 // Accepts a Venmo username (no @) OR the phone number on the Venmo account.
 // A phone number is the safer choice: usernames get changed, phone numbers do not.
 let VENMO_RECIPIENT = "vanguard_performance";
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// ORDER CAPTURE - writes each sent order into Supabase so it can be matched
+// to a rep and totalled. This key is the public "anon" key: by database
+// design (row level security, no policies) it cannot read or list orders,
+// reps, or anything else - its only door in is the submit_vpl_order()
+// function, which validates everything it is given. Safe to ship in the page.
+const SUPABASE_URL = "https://gzkzmoqvepcxvzxkeytb.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6a3ptb3F2ZXBjeHZ6eGtleXRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNzA1ODYsImV4cCI6MjEwMjg0NjU4Nn0.PNWosXhiMbJIebGzkRY0bNkWOOltXF5TJyo7rpDbj1Y";
+
+// A rep's link is ?rep=CODE. Once seen, it sticks for this browser so a
+// customer who bookmarks the link or orders again later still credits them -
+// a fresh ?rep= on a later visit simply replaces it.
+const REP_STORAGE_KEY = "vpl-rep-code";
+function captureRepCode(){
+  try {
+    const fromUrl = new URLSearchParams(location.search).get('rep');
+    if(fromUrl && /^[A-Za-z0-9_-]{1,20}$/.test(fromUrl.trim())){
+      const code = fromUrl.trim().toUpperCase();
+      localStorage.setItem(REP_STORAGE_KEY, code);
+      return code;
+    }
+    return localStorage.getItem(REP_STORAGE_KEY) || '';
+  } catch(error) {
+    return '';
+  }
+}
+const repCode = captureRepCode();
 // ---------------------------------------------------------------------------
 
 // Ambiguous characters (0/O, 1/I) are left out so a number read aloud or typed
@@ -2429,6 +2458,60 @@ function spreadsheetRow(){
   ].map(clean).join("\t");
 }
 
+function centsFrom(dollars){ return Math.round(dollars * 100); }
+
+// What actually reaches the business record of the order is the text message
+// or email the customer sends - that always works, with or without a network
+// path to the database. This is a second, best-effort copy for the tracker
+// and the rep totals. keepalive lets the request finish even though the very
+// next line hands the page off to Messages or Mail.
+function buildOrderPayload(){
+  const subtotal = cartSubtotal();
+  const discount = discountActive ? subtotal * DISCOUNT_RATE : 0;
+  return {
+    order_number: orderNumber,
+    customer_name: fieldValue('paymentName') || 'Not provided',
+    delivery_method: isShipping() ? 'ship' : 'willcall',
+    street: fieldValue('shipStreet'),
+    unit: fieldValue('shipStreet2'),
+    city: fieldValue('shipCity'),
+    state: fieldValue('shipState').toUpperCase(),
+    zip: fieldValue('shipZip'),
+    subtotal_cents: centsFrom(subtotal),
+    discount_cents: centsFrom(discount),
+    shipping_cents: centsFrom(shippingFee()),
+    total_cents: centsFrom(orderTotal()),
+    rep_code: repCode || null,
+    user_agent: String(navigator.userAgent || '').slice(0, 300),
+    items: Object.values(cart).map(l => ({
+      name: String(l.name || 'item').slice(0, 100),
+      unit_price_cents: centsFrom(l.unitPrice),
+      qty: l.qty,
+      line_total_cents: centsFrom(l.unitPrice * l.qty)
+    }))
+  };
+}
+
+async function recordOrder(){
+  if(!cartCount()) return;
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/rpc/submit_vpl_order', {
+      method: 'POST',
+      keepalive: true,
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ payload: buildOrderPayload() })
+    });
+  } catch(error) {
+    // The text or email the customer is about to send is still the order of
+    // record. Losing this copy must never block or alarm the customer.
+    if(window.console && console.error) console.error('order record failed', error);
+  }
+}
+
 function buildOrderText(){
   const lines = Object.values(cart).map(l => `${l.name} (${l.meta}) x${l.qty} — ${moneyFull(l.unitPrice * l.qty)}`);
   const subtotal = cartSubtotal();
@@ -2704,6 +2787,7 @@ document.getElementById('copyZelle').addEventListener('click', () => {
 });
 
 function markOrderSent(){
+  recordOrder();
   orderSent = true;
   persistOrderState();
   showToast(`Order ${orderNumber} sent. Pay using that number.`);
